@@ -3,29 +3,44 @@ pipeline {
 
     environment {
         IMAGE_NAME = "chat-app"
+        CONTAINER_NAME = "chat-app"
+        HOST_PORT = "3000"
+        CONTAINER_PORT = "3000"
     }
 
     stages {
-        stage('Checkout') {
+        stage('Build Docker image') {
             steps {
-                git branch: 'master', url: 'http://localhost:8080/narzedzia_projekt/chat-app.git'
+                echo "🔧 Budowanie obrazu Dockera..."
+                sh "docker build -t $IMAGE_NAME ."
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Stop & Remove old container') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                echo "🧹 Usuwanie starego kontenera (jeśli istnieje)..."
+                sh """
+                    docker stop $CONTAINER_NAME || true
+                    docker rm $CONTAINER_NAME || true
+                """
             }
         }
 
-        stage('Run Container') {
+        stage('Run new container') {
             steps {
-                sh '''
-                    docker stop $IMAGE_NAME || true
-                    docker rm $IMAGE_NAME || true
-                    docker run -d --name $IMAGE_NAME -p 3000:3000 $IMAGE_NAME
-                '''
+                echo "🚀 Uruchamianie nowego kontenera..."
+                sh "docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT $IMAGE_NAME"
             }
         }
     }
+
+    post {
+        success {
+            echo "✅ Build i deploy zakończone sukcesem!"
+        }
+        failure {
+            echo "❌ Wystąpił błąd w pipeline – sprawdź logi."
+        }
+    }
 }
+
