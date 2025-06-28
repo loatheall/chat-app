@@ -1,0 +1,55 @@
+const authRoutes = require('./auth');
+const bodyParser = require('body-parser');
+
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const mysql = require('mysql2');
+require('dotenv').config();
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+app.use(express.static('public'));
+
+function connectWithRetry() {
+  const db = mysql.createConnection({
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'chatuser',
+    password: process.env.DB_PASSWORD || 'ch@tpass',
+    database: process.env.DB_NAME || 'chatdb'
+  });
+
+  db.connect((err) => {
+    if (err) {
+      console.error('❌ MySQL connection failed. Retrying in 5s...', err.message);
+      setTimeout(connectWithRetry, 5000);
+    } else {
+      console.log('✅ Connected to MySQL');
+      startChatServer(db);
+    }
+  });
+}
+
+function startChatServer(db) {
+  db.query(`
+    CREATE TABLE IF NOT EXISTS messages (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      text TEXT NOT NULL,
+      timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  io.on('connection', (socket) => {
+    console.log('🔌 User connected');
+
+    db.query('SELECT * FROM messages ORDER BY timestamp ASC', (err, results) => {
+      if (!err) {
+        results.forEach(row => socket.emit('chat message', row.text));
+      }
+    });
+
+    socket.on('chat message', (msg) => {
+      db.query('INSERT INTO messages (text) VALUES (?)', [msg]);
+      io.emit('chat m
