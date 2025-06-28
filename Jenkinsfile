@@ -9,6 +9,13 @@ pipeline {
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                echo "📥 Pobieranie kodu źródłowego z repozytorium..."
+                checkout scm
+            }
+        }
+
         stage('Build Docker image') {
             steps {
                 echo "🔧 Budowanie obrazu Dockera..."
