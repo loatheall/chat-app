@@ -18,7 +18,7 @@ pipeline {
 
         stage('Stop & Remove old container') {
             steps {
-                echo "🧹 Usuwanie starego kontenera (jeśli istnieje)..."
+                echo "🧹 Usuwanie starego kontenera..."
                 sh """
                     docker stop $CONTAINER_NAME || true
                     docker rm $CONTAINER_NAME || true
@@ -28,7 +28,7 @@ pipeline {
 
         stage('Run new container') {
             steps {
-                echo "🚀 Uruchamianie nowego kontenera..."
+                echo "🚀 Uruchamianie kontenera..."
                 sh "docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT $IMAGE_NAME"
             }
         }
@@ -36,10 +36,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Build i deploy zakończone sukcesem!"
+            echo "✅ Build zakończony sukcesem!"
         }
         failure {
-            echo "❌ Wystąpił błąd w pipeline – sprawdź logi."
+            echo "❌ Błąd w pipeline – sprawdź logi."
         }
     }
 }
