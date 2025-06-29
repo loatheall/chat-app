@@ -1,23 +1,24 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Logowanie</title>
-  </head>
-  <body>
-    <h2>Logowanie</h2>
-    <form method="POST" action="/login">
-      <input type="text" name="username" placeholder="Nazwa użytkownika" required><br><br>
-      <input type="password" name="password" placeholder="Hasło" required><br><br>
-      <button type="submit">Zaloguj się</button>
-    </form>
+<head>
+  <meta charset="UTF-8">
+  <title>Logowanie</title>
+</head>
+<body>
+  <h2>Logowanie</h2>
+  <form action="/login" method="POST">
+    <input type="text" name="username" placeholder="Login"><br>
+    <input type="password" name="password" placeholder="Hasło"><br>
+    <button type="submit">Zaloguj</button>
+  </form>
+  <p id="error" style="color: red;"></p>
+  <p>Nie masz konta? <a href="/register.html">Zarejestruj się</a></p>
 
-    <h3>Nie masz konta?</h3>
-    <form method="POST" action="/register">
-      <input type="text" name="username" placeholder="Nowa nazwa użytkownika" required><br><br>
-      <input type="password" name="password" placeholder="Nowe hasło" required><br><br>
-      <button type="submit">Zarejestruj się</button>
-    </form>
-  </body>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const err = params.get('error');
+    if (err === 'missing') document.getElementById('error').textContent = 'Brakuje loginu lub hasła';
+    if (err === 'invalid') document.getElementById('error').textContent = 'Nieprawidłowy login lub hasło';
+  </script>
+</body>
 </html>
-

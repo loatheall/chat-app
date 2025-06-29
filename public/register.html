@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Rejestracja</title>
+</head>
+<body>
+  <h2>Rejestracja</h2>
+  <form action="/register" method="POST">
+    <input type="text" name="username" placeholder="Login"><br>
+    <input type="password" name="password" placeholder="Hasło"><br>
+    <button type="submit">Zarejestruj</button>
+  </form>
+  <p id="error" style="color: red;"></p>
+  <p>Masz już konto? <a href="/login.html">Zaloguj się</a></p>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const err = params.get('error');
+    if (err === 'missing') document.getElementById('error').textContent = 'Brakuje loginu lub hasła';
+    if (err === 'exists') document.getElementById('error').textContent = 'Użytkownik już istnieje';
+    if (err === 'server') document.getElementById('error').textContent = 'Błąd serwera';
+  </script>
+</body>
+</html>
