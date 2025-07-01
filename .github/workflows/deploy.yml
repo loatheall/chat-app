@@ -1,11 +1,10 @@
 name: Local Deploy via Self-Hosted Runner
+
 on:
   workflow_run:
     workflows: ["Testy aplikacji"]
     types:
       - completed
-
-on:
   push:
     branches: [main]
 
@@ -14,16 +13,16 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - name: 📥 Checkout repo
-      uses: actions/checkout@v4
+      - name: 📥 Checkout repo
+        uses: actions/checkout@v4
 
-    - name: 🔧 Build Docker image
-      run: docker build -t chat-app .
+      - name: 🔧 Build Docker image
+        run: docker build -t chat-app .
 
-    - name: 🧹 Stop & remove old container
-      run: |
-        docker stop chat-app || true
-        docker rm chat-app || true
+      - name: 🧹 Stop & remove old container
+        run: |
+          docker stop chat-app || true
+          docker rm chat-app || true
 
-    - name: 🚀 Run new container
-      run: docker run -d --name chat-app -p 3000:3000 chat-app
+      - name: 🚀 Run new container
+        run: docker run -d --name chat-app -p 3000:3000 chat-app
