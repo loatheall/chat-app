@@ -40,5 +40,5 @@ test('POST /register powinien przekierować na /login.html', async () => {
     .send({ username: 'testuser', password: 'testpass' });
 
   expect(res.statusCode).toBe(302);
-  expect(res.headers.location).toBe('/login.html');
+  expect(res.headers.location).toBe('/login');
 }, 10000); // wydłużamy timeout do 10 sekund
