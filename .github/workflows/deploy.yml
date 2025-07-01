@@ -1,4 +1,9 @@
 name: Local Deploy via Self-Hosted Runner
+on:
+  workflow_run:
+    workflows: ["Testy aplikacji"]
+    types:
+      - completed
 
 on:
   push:
