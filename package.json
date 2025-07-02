@@ -21,6 +21,11 @@
     "jest": "^30.0.3",
     "supertest": "^6.3.4"
   },
+  "jest": {
+    "testMatch": [
+      "**/__tests__/**/*.js?(x)"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "http://localhost:8080/narzedzia_projekt/chat-app"
