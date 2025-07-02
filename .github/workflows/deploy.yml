@@ -1,4 +1,4 @@
-name: Local Deploy via Self-Hosted Runner
+name: Local Deploy via Docker Compose
 
 on:
   workflow_run:
@@ -16,13 +16,11 @@ jobs:
       - name: 📥 Checkout repo
         uses: actions/checkout@v4
 
-      - name: 🔧 Build Docker image
-        run: docker build -t chat-app .
+      - name: 🛑 Stop previous containers
+        run: docker compose down || true
 
-      - name: 🧹 Stop & remove old container
-        run: |
-          docker stop chat-app || true
-          docker rm chat-app || true
+      - name: 🔧 Build & start with Docker Compose
+        run: docker compose up -d --build
 
-      - name: 🚀 Run new container
-        run: docker run -d --name chat-app -p 3000:3000 chat-app
+      - name: 🧪 Check running containers
+        run: docker ps
