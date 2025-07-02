@@ -7,6 +7,9 @@ const socketIo = require('socket.io');
 const authRoutes = require('./auth');
 const mysql = require('mysql2');
 
+// Możesz odkomentować jeśli chcesz używać .env pliku:
+// require('dotenv').config();
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
@@ -30,16 +33,19 @@ app.use(sessionMiddleware);
 // Udostępnianie plików statycznych
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Połączenie z MySQL
+// Połączenie z MySQL (teraz z użyciem zmiennych środowiskowych)
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'root',
-  database: 'chatdb'
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'chatdb'
 });
 
 db.connect(err => {
-  if (err) return console.error('❌ Błąd połączenia z MySQL:', err);
+  if (err) {
+    console.error('❌ Błąd połączenia z MySQL:', err);
+    process.exit(1);
+  }
   console.log('✅ Połączono z MySQL');
 });
 
@@ -84,7 +90,7 @@ io.on('connection', (socket) => {
 });
 
 // Start serwera
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Serwer działa na http://0.0.0.0:${PORT}`);
 });
