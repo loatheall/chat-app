@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   chat:
     build: .
@@ -12,6 +10,7 @@ services:
       DB_USER: chatuser
       DB_PASSWORD: ch@tpass
       DB_NAME: chatdb
+    command: ["bash", "./scripts/wait-for-db.sh", "db:3306", "-t", "60", "--", "npm", "start"]
 
   db:
     image: mysql:8.0
